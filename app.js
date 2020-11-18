@@ -85,6 +85,7 @@ const UI = (() => {
   const box9 = document.querySelector('#nine');
   const turnDescription = document.querySelector('#turnDescription');
   const winnerBanner = document.querySelector('#winnerBanner');
+  const tieBanner = document.querySelector('#tieBanner');
 
   const allPositions = [ box1, box2, box3, box4, box5, box6, box7, box8, box9 ];
 
@@ -92,23 +93,29 @@ const UI = (() => {
 
   for (let box of allPositions) {
     box.addEventListener('click', () => {
-      // change UI box
-      box.innerText = game.player;
-      // handle padding change
-      box.classList.remove('py-6');
-      box.classList.add('pb-5', 'pt-6');
-      // add piece to gameboard
-      game.placePiece(game.player, box.id)
-      // check if winner
-      console.log(game.isWon());
-      console.log(game.isFull());
-      // switch player
-      game.player = game.switchPlayer();
+      // if statement to see if click is valid
+      if (box.innerText == '') {
+        // change UI box
+        box.innerText = game.player;
+        // handle padding change
+        box.classList.remove('py-6');
+        box.classList.add('pb-5', 'pt-6');
+        // add piece to gameboard
+        game.placePiece(game.player, box.id)
+        // check if winner
+        if (game.isWon()) { winnerBanner.classList.remove('hidden') }
+        if (game.isFull()) { tieBanner.classList.remove('hidden') }
+        // switch player
+        game.player = game.switchPlayer();
 
-      turnDescription.innerText == 'Player X turn' ?
-        turnDescription.innerText = 'Player O turn' :
-        turnDescription.innerText = 'Player X turn' ;
-      // winnerBanner.classList.toggle('hidden');
+        turnDescription.innerText == 'Player X turn' ?
+          turnDescription.innerText = 'Player O turn' :
+          turnDescription.innerText = 'Player X turn' ;
+        // winnerBanner.classList.toggle('hidden');
+      } else {
+        alert('sorry, that space is already taken!')
+      }
+
     });
   }
 
