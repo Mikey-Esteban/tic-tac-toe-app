@@ -1,5 +1,5 @@
-// Module for Gameboard
-const Gameboard = () => {
+// Module for boardFactory
+const boardFactory = () => {
   let board =
   [
     [
@@ -13,6 +13,19 @@ const Gameboard = () => {
     ]
   ]
 
+  return { board }
+}
+
+// Module for Gameplay
+const Gameplay = () => {
+  // initialize game with board and player x
+  let board = boardFactory().board;
+  let player = 'X';
+
+  const switchPlayer = () => {
+    return player == 'X' ? player = 'O' : player = 'X';
+  }
+
   const placePiece = (type, id) => {
     const legend = {
       'one': { row: 0, col: 0 },
@@ -24,10 +37,8 @@ const Gameboard = () => {
       'seven': { row: 2, col: 0 },
       'eight': { row: 2, col: 1 },
       'nine': { row: 2, col: 2 }
-    }
+    };
     const { row, col } = legend[id];
-    console.log(`row is ${row}`);
-    console.log(`col is ${col}`);
     board[row][col] = type;
   }
 
@@ -56,23 +67,9 @@ const Gameboard = () => {
     ) { return true }
 
     return false
-
   }
 
-  return { board, placePiece, isFull, isWon }
-}
-
-// Module for Gameplay
-const Gameplay = () => {
-  let player = 'X';
-
-  const switchPlayer = () => {
-    return player == 'X' ? player = 'O' : player = 'X';
-  }
-
-  const board = Gameboard();
-
-  return { player, switchPlayer, board }
+  return { player, board, switchPlayer, placePiece, isFull, isWon }
 };
 
 // IIFE for User Interface
@@ -97,15 +94,21 @@ const UI = (() => {
     box.addEventListener('click', () => {
       // change UI box
       box.innerText = game.player;
+      // handle padding change
+      box.classList.remove('py-6');
+      box.classList.add('pb-5', 'pt-6');
       // add piece to gameboard
-      game.board.placePiece(game.player, box.id)
+      game.placePiece(game.player, box.id)
+      // check if winner
+      console.log(game.isWon());
+      console.log(game.isFull());
       // switch player
       game.player = game.switchPlayer();
 
       turnDescription.innerText == 'Player X turn' ?
         turnDescription.innerText = 'Player O turn' :
         turnDescription.innerText = 'Player X turn' ;
-      winnerBanner.classList.toggle('hidden');
+      // winnerBanner.classList.toggle('hidden');
     });
   }
 
