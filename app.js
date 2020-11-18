@@ -87,15 +87,39 @@ const UI = (() => {
   const winnerBanner = document.querySelector('#winnerBanner');
   const tieBanner = document.querySelector('#tieBanner');
 
+  const resetBtn = document.querySelector('#resetBtn');
+  resetBtn.addEventListener('click', () => {
+    game = Gameplay();
+    for (let box of allPositions) {
+      // reset inner text
+      box.innerText = '';
+      // reset padding
+      if (!box.classList.contains('py-6')) {
+        box.classList.remove('pb-5', 'pt-6');
+        box.classList.add('py-6');
+      }
+      // reset winner, tie banner, turn description
+      if (!winnerBanner.classList.contains('hidden')) { winnerBanner.classList.add('hidden')}
+      if (!tieBanner.classList.contains('hidden')) { tieBanner.classList.add('hidden')}
+      if (turnDescription.classList.contains('hidden')) { turnDescription.classList.remove('hidden')}
+      turnDescription.innerText = 'Player X turn';
+
+      box.addEventListener('click', clickHandler, true);
+    }
+  })
+
   const allPositions = [ box1, box2, box3, box4, box5, box6, box7, box8, box9 ];
 
   disableClicks = () => {
     for(let box of allPositions) {
-      box.removeEventListener('click', runGameSequence, true)
+      box.removeEventListener('click', clickHandler, true)
     }
   }
 
-  runGameSequence = (e) => {
+  clickHandler = (e) => {
+    // !!!!!!!!!!!!!!!!
+    // Runs Game Sequence
+    // !!!!!!!!!!!!!!!!
     const box = e.target;
     // if statement to see if click is valid
     if (box.innerText == '') {
@@ -108,31 +132,32 @@ const UI = (() => {
       game.placePiece(game.player, box.id);
       // check if winner
       if (game.isWon()) {
+        winnerBanner.innerText = `CONGRATS PLAYER ${game.player} WON!`
         winnerBanner.classList.remove('hidden');
         turnDescription.classList.add('hidden');
         disableClicks();
       }
-      if (game.isFull()) {
+      else if (game.isFull()) {
         tieBanner.classList.remove('hidden');
         turnDescription.classList.add('hidden');
         disableClicks();
       }
       // switch player
       game.player = game.switchPlayer();
-
+      // update turn description
       turnDescription.innerText == 'Player X turn' ?
         turnDescription.innerText = 'Player O turn' :
         turnDescription.innerText = 'Player X turn' ;
-      // winnerBanner.classList.toggle('hidden');
+
     } else {
       alert('sorry, that space is already taken!')
     }
   }
 
+  // initalize gameplay
   game = Gameplay();
-
   for (let box of allPositions) {
-    box.addEventListener('click', runGameSequence, true);
+    box.addEventListener('click', clickHandler, true);
   }
 
 })();
