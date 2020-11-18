@@ -1,0 +1,11 @@
+#left, #center {
+  border-right: 1px solid hsl(0, 0%, 48%);
+}
+
+#one, #two, #three, #four, #five, #six {
+  border-bottom: 1px solid hsl(0, 0%, 48%);
+}
+
+.hidden {
+  display: none;
+}
