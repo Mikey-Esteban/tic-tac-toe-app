@@ -89,34 +89,50 @@ const UI = (() => {
 
   const allPositions = [ box1, box2, box3, box4, box5, box6, box7, box8, box9 ];
 
+  disableClicks = () => {
+    for(let box of allPositions) {
+      box.removeEventListener('click', runGameSequence, true)
+    }
+  }
+
+  runGameSequence = (e) => {
+    const box = e.target;
+    // if statement to see if click is valid
+    if (box.innerText == '') {
+      // change UI box
+      box.innerText = game.player;
+      // handle padding change
+      box.classList.remove('py-6');
+      box.classList.add('pb-5', 'pt-6');
+      // add piece to gameboard
+      game.placePiece(game.player, box.id);
+      // check if winner
+      if (game.isWon()) {
+        winnerBanner.classList.remove('hidden');
+        turnDescription.classList.add('hidden');
+        disableClicks();
+      }
+      if (game.isFull()) {
+        tieBanner.classList.remove('hidden');
+        turnDescription.classList.add('hidden');
+        disableClicks();
+      }
+      // switch player
+      game.player = game.switchPlayer();
+
+      turnDescription.innerText == 'Player X turn' ?
+        turnDescription.innerText = 'Player O turn' :
+        turnDescription.innerText = 'Player X turn' ;
+      // winnerBanner.classList.toggle('hidden');
+    } else {
+      alert('sorry, that space is already taken!')
+    }
+  }
+
   game = Gameplay();
 
   for (let box of allPositions) {
-    box.addEventListener('click', () => {
-      // if statement to see if click is valid
-      if (box.innerText == '') {
-        // change UI box
-        box.innerText = game.player;
-        // handle padding change
-        box.classList.remove('py-6');
-        box.classList.add('pb-5', 'pt-6');
-        // add piece to gameboard
-        game.placePiece(game.player, box.id)
-        // check if winner
-        if (game.isWon()) { winnerBanner.classList.remove('hidden') }
-        if (game.isFull()) { tieBanner.classList.remove('hidden') }
-        // switch player
-        game.player = game.switchPlayer();
-
-        turnDescription.innerText == 'Player X turn' ?
-          turnDescription.innerText = 'Player O turn' :
-          turnDescription.innerText = 'Player X turn' ;
-        // winnerBanner.classList.toggle('hidden');
-      } else {
-        alert('sorry, that space is already taken!')
-      }
-
-    });
+    box.addEventListener('click', runGameSequence, true);
   }
 
 })();
