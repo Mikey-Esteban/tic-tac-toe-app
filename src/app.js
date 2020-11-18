@@ -17,8 +17,9 @@ const UI = (() => {
   resetBtn.addEventListener('click', () => {
     game = Gameplay();
     for (let box of allPositions) {
-      // reset inner text
+      // reset inner text & styles
       box.innerText = '';
+      if (box.classList.contains('winner')) { box.classList.remove('winner') }
       // reset padding
       if (!box.classList.contains('py-6')) {
         box.classList.remove('pb-5', 'pt-6');
@@ -36,13 +37,22 @@ const UI = (() => {
 
   const allPositions = [ box1, box2, box3, box4, box5, box6, box7, box8, box9 ];
 
-  disableClicks = () => {
+  const disableClicks = () => {
     for(let box of allPositions) {
       box.removeEventListener('click', clickHandler, true)
     }
   }
 
-  clickHandler = (e) => {
+  const styleWinningCombo = combo => {
+    console.log(combo);
+    for (let box of allPositions) {
+      if (combo.includes(box.id)) {
+        console.log(box.classList.add('winner'));
+      }
+    }
+  }
+
+  const clickHandler = (e) => {
     // !!!!!!!!!!!!!!!!
     // Runs Game Sequence
     // !!!!!!!!!!!!!!!!
@@ -61,6 +71,11 @@ const UI = (() => {
         winnerBanner.innerText = `CONGRATS PLAYER ${game.player} WON!`
         winnerBanner.classList.remove('hidden');
         turnDescription.classList.add('hidden');
+
+        const combo = game.isWon();
+        styleWinningCombo(combo);
+
+
         disableClicks();
       }
       else if (game.isFull()) {
